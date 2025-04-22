@@ -1,4 +1,4 @@
-# consultoria_teste_01# Documentação do Agente de IA para Consultoria Educacional - Serra Projetos Educacionais
+# Documentação do Agente de IA para Consultoria Educacional - Serra Projetos Educacionais
 
 ## Visão Geral
 

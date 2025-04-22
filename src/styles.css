@@ -1,0 +1,207 @@
+/* Estilos para o Agente de IA para Consultoria Educacional */
+
+/* Estilos gerais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.card {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    border-top-left-radius: 0.5rem !important;
+    border-top-right-radius: 0.5rem !important;
+}
+
+/* Estilos para o chat do assistente virtual */
+.chat-container {
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+}
+
+.chat-message {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-message {
+    align-items: flex-end;
+}
+
+.system-message {
+    align-items: flex-start;
+}
+
+.message-content {
+    max-width: 80%;
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+}
+
+.user-message .message-content {
+    background-color: #007bff;
+    color: white;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.system-message .message-content {
+    background-color: #e9ecef;
+    color: #212529;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.message-content p {
+    margin-bottom: 0;
+}
+
+/* Estilos para os gráficos e visualizações */
+.chart-container {
+    position: relative;
+    height: 250px;
+}
+
+/* Estilos para os indicadores do dashboard */
+.card .h2 {
+    font-weight: 600;
+}
+
+/* Estilos para as tabelas */
+.table th {
+    font-weight: 600;
+    background-color: #f8f9fa;
+}
+
+/* Estilos para os formulários */
+.form-label {
+    font-weight: 500;
+}
+
+/* Estilos para os botões */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Estilos para os badges */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+/* Estilos para o menu de navegação */
+.navbar .nav-link {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.navbar .nav-link.active {
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+/* Estilos para o rodapé */
+footer {
+    border-top: 1px solid #dee2e6;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .message-content {
+        max-width: 90%;
+    }
+}
+
+/* Animações */
+.fade-in {
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Estilos para os resultados de diagnóstico e simulação */
+.result-section {
+    margin-bottom: 1.5rem;
+}
+
+.result-section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.metric-card {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #0d6efd;
+}
+
+.metric-card.good {
+    border-left-color: #198754;
+}
+
+.metric-card.warning {
+    border-left-color: #ffc107;
+}
+
+.metric-card.danger {
+    border-left-color: #dc3545;
+}
+
+.metric-card .metric-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.metric-card .metric-label {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.recommendation-item {
+    padding: 0.75rem 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+    border-left: 3px solid #0d6efd;
+}
+
+/* Estilos para o modal */
+.modal-header {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+/* Estilos para os tooltips */
+.tooltip {
+    font-size: 0.875rem;
+}
+
+/* Estilos para os alertas */
+.alert {
+    border-radius: 0.5rem;
+}

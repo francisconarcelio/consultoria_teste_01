@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente de IA para Consultoria Educacional - Serra Projetos Educacionais</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="bg-primary text-white py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1>Agente de IA para Consultoria Educacional</h1>
+                    <h3>Serra Projetos Educacionais</h3>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i><span id="username">Usuário</span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#" id="profile-link"><i class="bi bi-person me-2"></i>Perfil</a></li>
+                            <li><a class="dropdown-item" href="#" id="settings-link"><i class="bi bi-gear me-2"></i>Configurações</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logout-link"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" id="dashboard-link"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="diagnostico-link"><i class="bi bi-clipboard-data me-1"></i>Diagnóstico</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="simulacao-link"><i class="bi bi-graph-up me-1"></i>Simulação</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="assistente-link"><i class="bi bi-chat-dots me-1"></i>Assistente Virtual</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="instituicoes-link"><i class="bi bi-building me-1"></i>Instituições</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <!-- Seção de Dashboard -->
+        <section id="dashboard-section" class="section-content">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="card-title h5 mb-0">Visão Geral</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h3 class="h2 text-primary">12</h3>
+                                            <p class="mb-0">Instituições Ativas</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h3 class="h2 text-success">28</h3>
+                                            <p class="mb-0">Diagnósticos Realizados</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h3 class="h2 text-info">15</h3>
+                                            <p class="mb-0">Simulações Executadas</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h3 class="h2 text-warning">156</h3>
+                                            <p class="mb-0">Consultas ao Assistente</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="card-title h5 mb-0">Atividade Recente</h2>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-info rounded-pill me-2">Diagnóstico</span>
+                                        Colégio Inovação
+                                    </div>
+                                    <small class="text-muted">Hoje, 10:45</small>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-warning rounded-pill me-2">Simulação</span>
+                                        Escola Modelo
+                                    </div>
+                                    <small class="text-muted">Hoje, 09:30</small>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-success rounded-pill me-2">Assistente</span>
+                                        Instituto Educacional Futuro
+                                    </div>
+                                    <small class="text-muted">Ontem, 16:20</small>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-info rounded-pill me-2">Diagnóstico</span>
+                                        Escola Criativa
+                                    </div>
+                                    <small class="text-muted">Ontem, 14:15</small>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-warning rounded-pill me-2">Simulação</span>
+                                        Colégio Integrado
+                                    </div>
+                                    <small class="text-muted">22/04/2025, 11:05</small>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="card-title h5 mb-0">Distribuição por Pilar</h2>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="pillarChart" width="400" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="card-title h5 mb-0">Instituições Recentes</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Tipo</th>
+                                            <th>Segmento</th>
+                                            <th>Localização</th>
+                                            <th>Alunos</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Escola Modelo</td>
+                                            <td>Escola</td>
+                                            <td>Fundamental</td>
+                                            <td>São Paulo, SP</td>
+                                            <td>500</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-clipboard-data"></i></button>
+                                                <button class="btn btn-sm btn-outline-info"><i class="bi bi-graph-up"></i></button>
+                                                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-three-dots"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Colégio Inovação</td>
+                                            <td>Escola</td>
+                                            <td>Médio</td>
+                                            <td>Rio de Janeiro, RJ</td>
+                                            <td>350</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-clipboard-data"></i></button>
+                                                <button class="btn btn-sm btn-outline-info"><i class="bi bi-graph-up"></i></button>
+                                                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-three-dots"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Instituto Educacional Futuro</td>
+                                            <td>Escola</td>
+                                            <td>Infantil/Fundamental</td>
+                                            <td>Belo Horizonte, MG</td>
+                                            <td>420</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-clipboard-data"></i></button>
+                                                <button class="btn btn-sm btn-outline-info"><i class="bi bi-graph-up"></i></button>
+                                                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-three-dots"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Escola Criativa</td>
+                                            <td>Escola</td>
+                                            <td>Infantil</td>
+                                            <td>Curitiba, PR</td>
+                                            <td>180</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-clipboard-data"></i></button>
+                                                <button class="btn btn-sm btn-outline-info"><i class="bi bi-graph-up"></i></button>
+                                                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-three-dots"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Colégio Integrado</td>
+                                            <td>Escola</td>
+                                            <td>Fundamental/Médio</td>
+                                            <td>Salvador, BA</td>
+                                            <td>620</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-clipboard-data"></i></button>
+                                                <button class="btn btn-sm btn-outline-info"><i class="bi bi-graph-up"></i></button>
+                                                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-three-dots"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Diagnóstico -->
+        <section id="diagnostico-section" class="section-content d-none">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="card-title h5 mb-0">Novo Diagnóstico</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="diagnostico-form">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="instituicao-select" class="form-label">Instituição</label>
+                                        <select class="form-select" id="instituicao-select" required>
+                                            <option value="" selected disabled>Selecione uma instituição</option>
+                                            <option value="1">Escola Modelo</option>
+                                            <option value="2">Colégio Inovação</option>
+                                            <option value="3">Instituto Educacional Futuro</option>
+                                            <option value="4">Escola Criativa</option>
+                                            <option value="5">Colégio Integrado</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Pilares a Analisar</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="pedagogico" id="pilar-pedagogico" checked>
+                                            <label class="form-check-label" for="pilar-pedagogico">
+                                                Pedagógico
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="comercial" id="pilar-comercial" checked>
+                                            <label class="form-check-label" for="pilar-comercial">
+                                                Comercial
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="marketing" id="pilar-marketing" checked>
+                                            <label class="form-check-label" for="pilar-marketing">
+                                                Marketing
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="financeiro" id="pilar-financeiro" checked>
+                                            <label class="form-check-label" for="pilar-financeiro">
+                                                Financeiro
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="contexto-textarea" class="form-label">Contexto Adicional (opcional)</label>
+                                        <textarea class="form-control" id="contexto-textarea" rows="3" placeholder="Informe contexto adicional relevante para o diagnóstico..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Realizar Diagnóstico</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="card-title h5 mb-0">Resultados do Diagnóstico</h2>
+                        </div>
+                        <div class="card-body">
+                            <div id="diagnostico-resultados">
+                                <div class="text-center py-5">
+                                    <p class="text-muted">Selecione uma instituição e realize um diagnóstico para ver os resultados.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Simulação -->
+        <section id="simulacao-section" class="section-content d-none">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="card-title h5 mb-0">Nova Simulação</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="simulacao-form">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="sim-instituicao-select" class="form-label">Instituição</label>
+                                        <select class="form-select" id="sim-instituicao-select" required>
+                                            <option value="" selected disabled>Selecione uma instituição</option>
+                                            <option value="1">Escola Modelo</option>
+                                            <option value="2">Colégio Inovação</option>
+                                            <option value="3">Instituto Educacional Futuro</option>
+                                            <option value="4">Escola Criativa</option>
+                                            <option value="5">Colégio Integrado</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="cenario-select" class="form-label">Cenário</label>
+                                        <select class="form-select" id="cenario-select" required>
+                                            <option value="" selected disabled>Selecione um cenário</option>
+                                            <option value="nova_metodologia">Implementação de Nova Metodologia Pedagógica</option>
+                                            <option value="estrategia_comercial">Nova Estratégia Comercial</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="horizonte-range" class="form-label">Horizonte Temporal: <span id="horizonte-value">12</span> meses</label>
+                                        <input type="range" class="form-range" min="1" max="24" value="12" id="horizonte-range">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="parametros-textarea" class="form-label">Parâmetros Adicionais (opcional)</label>
+                                        <textarea class="form-control" id="parametros-textarea" rows="3" placeholder="Informe parâmetros adicionais para a simulação..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Executar Simulação</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="card-title h5 mb-0">Resultados da Simulação</h2>
+                        </div>
+                        <div class="card-body">
+                            <div id="simulacao-resultados">
+                                <div class="text-center py-5">
+                                    <p class="text-muted">Selecione uma instituição e execute uma simulação para ver os resultados.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Assistente Virtual -->
+        <section id="assistente-section" class="section-content d-none">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="card-title h5 mb-0">Assistente Virtual</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="chat-container mb-3" id="chat-messages">
+                                <div class="chat-message system-message">
+                                    <div class="message-content">
+                                        <p>Olá! Sou o Assistente Virtual da Serra Projetos Educacionais. Como posso ajudar você hoje?</p>
+                                    </div>
+                                </div>
+                                <div class="chat-message system-message">
+                                    <div class="message-content">
+                                        <p>Posso responder perguntas sobre os quatro pilares estratégicos: Pedagógico, Comercial, Marketing e Financeiro.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="chat-input" placeholder="Digite sua pergunta...">
+                                <button class="btn btn-primary" type="button" id="send-message">
+                                    <i class="bi bi-send"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Instituições -->
+        <section id="instituicoes-section" class="section-content d-none">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h2 class="card-title h5 mb-0">Instituições Cadastradas</h2>
+                            <button class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#novaInstituicaoModal">
+                                <i class="bi bi-plus-circle me-1"></i>Nova Instituição
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nome</th>
+                                            <th>Tipo</th>
+                                            <th>Segmento</th>
+                                            <th>Localização</th>
+                                            <th>Alunos</th>
+                                            <th>Professores</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Escola Modelo</td>
+                                            <td>Escola</td>
+                                            <td>Fundamental</td>
+                                            <td>São Paulo, SP</td>
+                                            <td>500</td>
+                                            <td>30</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                                                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Colégio Inovação</td>
+                                            <td>Escola</td>
+                                            <td>Médio</td>
+                                            <td>Rio de Janeiro, RJ</td>
+                                            <td>350</td>
+                                            <td>25</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                                                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>Instituto Educacional Futuro</td>
+                                            <td>Escola</td>
+                                            <td>Infantil/Fundamental</td>
+                                            <td>Belo Horizonte, MG</td>
+                                            <td>420</td>
+                                            <td>28</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                                                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>4</td>
+                                            <td>Escola Criativa</td>
+                                            <td>Escola</td>
+                                            <td>Infantil</td>
+                                            <td>Curitiba, PR</td>
+                                            <td>180</td>
+                                            <td>15</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                                                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>5</td>
+                                            <td>Colégio Integrado</td>
+                                            <td>Escola</td>
+                                            <td>Fundamental/Médio</td>
+                                            <td>Salvador, BA</td>
+                                            <td>620</td>
+                                            <td>40</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                                                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Nova Instituição -->
+    <div class="modal fade" id="novaInstituicaoModal" tabindex="-1" aria-labelledby="novaInstituicaoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="novaInstituicaoModalLabel">Nova Instituição</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="nova-instituicao-form">
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label for="inst-nome" class="form-label">Nome da Instituição</label>
+                                <input type="text" class="form-control" id="inst-nome" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="inst-tipo" class="form-label">Tipo</label>
+                                <select class="form-select" id="inst-tipo" required>
+                                    <option value="" selected disabled>Selecione</option>
+                                    <option value="escola">Escola</option>
+                                    <option value="universidade">Universidade</option>
+                                    <option value="curso">Curso Livre</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="inst-segmento" class="form-label">Segmento</label>
+                                <select class="form-select" id="inst-segmento" required>
+                                    <option value="" selected disabled>Selecione</option>
+                                    <option value="infantil">Educação Infantil</option>
+                                    <option value="fundamental">Ensino Fundamental</option>
+                                    <option value="medio">Ensino Médio</option>
+                                    <option value="infantil_fundamental">Infantil e Fundamental</option>
+                                    <option value="fundamental_medio">Fundamental e Médio</option>
+                                    <option value="todos">Todos os Segmentos</option>
+                                    <option value="superior">Ensino Superior</option>
+                                    <option value="tecnico">Ensino Técnico</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <label for="inst-localizacao" class="form-label">Localização</label>
+                                <input type="text" class="form-control" id="inst-localizacao" placeholder="Cidade, UF" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="inst-alunos" class="form-label">Número de Alunos</label>
+                                <input type="number" class="form-control" id="inst-alunos" min="1" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inst-professores" class="form-label">Número de Professores</label>
+                                <input type="number" class="form-control" id="inst-professores" min="1" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="inst-observacoes" class="form-label">Observações</label>
+                            <textarea class="form-control" id="inst-observacoes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="salvar-instituicao">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-light py-3 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">© 2025 Serra Projetos Educacionais. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
