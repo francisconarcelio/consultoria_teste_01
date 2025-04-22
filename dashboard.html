@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Serra Projetos Educacionais</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .dashboard-container {
+            padding: 2rem 0;
+        }
+        .dashboard-card {
+            border-radius: 10px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            margin-bottom: 1.5rem;
+            height: 100%;
+        }
+        .dashboard-card-header {
+            background-color: #0d6efd;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dashboard-card-body {
+            padding: 1.5rem;
+        }
+        .stats-card {
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .stats-card-importancia {
+            background-color: #0d6efd;
+        }
+        .stats-card-rotina {
+            background-color: #20c997;
+        }
+        .stats-card-urgencia {
+            background-color: #dc3545;
+        }
+        .stats-card-pausa {
+            background-color: #6c757d;
+        }
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .stats-label {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        .task-item, .file-item, .notification-item {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .task-item:hover, .file-item:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
+        .notification-item {
+            border-left: 4px solid;
+        }
+        .notification-info {
+            border-color: #0d6efd;
+        }
+        .notification-warning {
+            border-color: #ffc107;
+        }
+        .notification-success {
+            border-color: #198754;
+        }
+        .notification-error {
+            border-color: #dc3545;
+        }
+        .task-title, .file-title, .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .task-meta, .file-meta, .notification-meta {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .chart-container {
+            height: 250px;
+        }
+        .welcome-message {
+            margin-bottom: 2rem;
+        }
+        .welcome-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="bi bi-book me-2"></i>Serra Projetos Educacionais
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('dashboard') }}">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('tasks.listar_tarefas') }}">
+                            <i class="bi bi-list-check me-1"></i>Tarefas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('files.listar_arquivos') }}">
+                            <i class="bi bi-file-earmark me-1"></i>Arquivos
+                        </a>
+                    </li>
+                    {% if current_user.is_admin() %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                            <i class="bi bi-gear me-1"></i>Administração
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-bell me-1"></i>
+                            {% if notificacoes|length > 0 %}
+                                <span class="badge bg-danger">{{ notificacoes|length }}</span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                            {% if notificacoes|length > 0 %}
+                                {% for notificacao in notificacoes %}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ notificacao.link or '#' }}">
+                                            <div class="d-flex align-items-center">
+                                                {% if notificacao.tipo == 'info' %}
+                                                    <i class="bi bi-info-circle text-primary me-2"></i>
+                                                {% elif notificacao.tipo == 'warning' %}
+                                                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                                                {% elif notificacao.tipo == 'success' %}
+                                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                                {% elif notificacao.tipo == 'error' %}
+                                                    <i class="bi bi-x-circle text-danger me-2"></i>
+                                                {% endif %}
+                                                <div>
+                                                    <div class="fw-bold">{{ notificacao.titulo }}</div>
+                                                    <div class="small text-muted">{{ format_datetime(notificacao.data_criacao) }}</div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-center" href="{{ url_for('admin.listar_notificacoes') }}">Ver todas</a></li>
+                            {% else %}
+                                <li><a class="dropdown-item text-center" href="#">Nenhuma notificação</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-1"></i>{{ current_user.nome }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('auth.perfil') }}">Meu Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sair</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container dashboard-container">
+        <!-- Mensagem de boas-vindas -->
+        <div class="welcome-message">
+            <h1 class="welcome-title">Olá, {{ current_user.nome }}!</h1>
+            <p class="welcome-subtitle">Bem-vindo ao seu dashboard. Aqui você pode gerenciar suas tarefas, arquivos e acompanhar seu progresso.</p>
+        </div>
+        
+        <!-- Mensagens de alerta -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Estatísticas -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card stats-card-importancia">
+                    <div class="stats-number">{{ estatisticas.por_classificacao.importancia or 0 }}</div>
+                    <div class="stats-label">Tarefas de Importância</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card stats-card-rotina">
+                    <div class="stats-number">{{ estatisticas.por_classificacao.rotina or 0 }}</div>
+                    <div class="stats-label">Tarefas de Rotina</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card stats-card-urgencia">
+                    <div class="stats-number">{{ estatisticas.por_classificacao.urgencia or 0 }}</div>
+                    <div class="stats-label">Tarefas de Urgência</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card stats-card-pausa">
+                    <div class="stats-number">{{ estatisticas.por_classificacao.pausa or 0 }}</div>
+                    <div class="stats-label">Tarefas em Pausa</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Tarefas recentes -->
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <h5 class="mb-0">Tarefas Recentes</h5>
+                        <a href="{{ url_for('tasks.listar_tarefas') }}" class="btn btn-sm btn-light">Ver todas</a>
+                    </div>
+                    <div class="dashboard-card-body">
+                        {% if tarefas_recentes %}
+                            {% for tarefa in tarefas_recentes %}
+                                <div class="task-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="task-title">{{ tarefa.titulo }}</div>
+                                            <div class="task-meta">
+                                                <span class="me-2">
+                                                    {% if tarefa.classificacao.value == 'importancia' %}
+                                                        <i class="bi bi-star-fill text-primary me-1"></i>Importância
+                                                    {% elif tarefa.classificacao.value == 'rotina' %}
+                                                        <i class="bi bi-calendar-check text-success me-1"></i>Rotina
+                                                    {% elif tarefa.classificacao.value == 'urgencia' %}
+                                                        <i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>Urgência
+                                                    {% elif tarefa.classificacao.value == 'pausa' %}
+                                                        <i class="bi bi-pause-circle-fill text-secondary me-1"></i>Pausa
+                                                    {% endif %}
+                                                </span>
+                                                <span class="me-2">
+                                                    {% if tarefa.prioridade.value == 'baixa' %}
+                                                        <span class="text-success">Baixa</span>
+                                                    {% elif tarefa.prioridade.value == 'media' %}
+                                                        <span class="text-warning">Média</span>
+                                                    {% elif tarefa.prioridade.value == 'alta' %}
+                                                        <span class="text-orange">Alta</span>
+                                                    {% elif tarefa.prioridade.value == 'critica' %}
+                                                        <span class="text-danger">Crítica</span>
+                                                    {% endif %}
+                                                </span>
+                                                {% if tarefa.data_prazo %}
+                                                    <span>
+                                                        <i class="bi bi-calendar"></i> {{ format_date(tarefa.data_prazo) }}
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <a href="{{ url_for('tasks.visualizar_tarefa', tarefa_id=tarefa.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-muted py-3">
+                                <i class="bi bi-list-check fs-4 d-block mb-2"></i>
+                                Nenhuma tarefa recente
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Arquivos recentes -->
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <h5 class="mb-0">Arquivos Recentes</h5>
+                        <a href="{{ url_for('files.listar_arquivos') }}" class="btn btn-sm btn-light">Ver todos</a>
+                    </div>
+                    <div class="dashboard-card-body">
+                        {% if arquivos_recentes %}
+                            {% for arquivo in arquivos_recentes %}
+                                <div class="file-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="file-title">{{ arquivo.nome }}</div>
+                                            <div class="file-meta">
+                                                <span class="me-2">
+                                                    {% if arquivo.tipo == 'pdf' %}
+                                                        <i class="bi bi-file-earmark-pdf text-danger me-1"></i>PDF
+                                                    {% elif arquivo.tipo == 'doc' or arquivo.tipo == 'docx' %}
+                                                        <i class="bi bi-file-earmark-word text-primary me-1"></i>DOC
+                                                    {% elif arquivo.tipo == 'txt' %}
+                                                        <i class="bi bi-file-earmark-text text-secondary me-1"></i>TXT
+                                                    {% else %}
+                                                        <i class="bi bi-file-earmark me-1"></i>{{ arquivo.tipo|upper }}
+                                                    {% endif %}
+                                                </span>
+                                                <span class="me-2">
+                                                    {{ format_filesize(arquivo.tamanho) }}
+                                                </span>
+                                                <span>
+                                                    <i class="bi bi-calendar"></i> {{ format_date(arquivo.data_upload) }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <a href="{{ url_for('files.download_arquivo', arquivo_id=arquivo.id) }}" class="btn btn-sm btn-outline-primary me-1">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                            <a href="{{ url_for('files.visualizar_arquivo', arquivo_id=arquivo.id) }}" class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-muted py-3">
+                                <i class="bi bi-file-earmark fs-4 d-block mb-2"></i>
+                                Nenhum arquivo recente
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <!-- Gráfico de tarefas -->
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <h5 class="mb-0">Progresso de Tarefas</h5>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="chart-container">
+                            <canvas id="taskProgressChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notificações -->
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <h5 class="mb-0">Notificações</h5>
+                        <a href="{{ url_for('admin.listar_notificacoes') }}" class="btn btn-sm btn-light">Ver todas</a>
+                    </div>
+                    <div class="dashboard-card-body">
+                        {% if notificacoes %}
+                            {% for notificacao in notificacoes %}
+                                <div class="notification-item notification-{{ notificacao.tipo }}">
+                                    <div class="notification-title">{{ notificacao.titulo }}</div>
+                                    <div class="notification-content small mb-1">{{ notificacao.mensagem }}</div>
+                                    <div class="notification-meta d-flex justify-content-between align-items-center">
+                                        <span>{{ format_datetime(notificacao.data_criacao) }}</span>
+                                        <form action="{{ url_for('admin.marcar_notificacao_lida', notificacao_id=notificacao.id) }}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-link p-0">Marcar como lida</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-muted py-3">
+                                <i class="bi bi-bell fs-4 d-block mb-2"></i>
+                                Nenhuma notificação não lida
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2025 Serra Projetos Educacionais. Todos os direitos reservados.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="{{ url_for('lgpd.privacy_policy') }}" class="text-decoration-none text-muted me-3">Política de Privacidade</a>
+                    <a href="{{ url_for('lgpd.terms') }}" class="text-decoration-none text-muted">Termos de Uso</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Gráfico de progresso de tarefas
+        const taskProgressCtx = document.getElementById('taskProgressChart').getContext('2d');
+        const taskProgressChart = new Chart(taskProgressCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Concluídas', 'Em Andamento', 'Pendentes'],
+                datasets: [{
+                    data: [
+                        {{ estatisticas.concluidas or 0 }}, 
+                        {{ estatisticas.em_andamento or 0 }}, 
+                        {{ estatisticas.pendentes or 0 }}
+                    ],
+                    backgroundColor: [
+                        '#198754',  // Verde
+                        '#0d6efd',  // Azul
+                        '#6c757d'   // Cinza
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
