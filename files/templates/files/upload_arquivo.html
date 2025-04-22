@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Arquivo - Serra Projetos Educacionais</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .upload-container {
+            max-width: 700px;
+            margin: 50px auto;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+            border-top-left-radius: 10px !important;
+            border-top-right-radius: 10px !important;
+            padding: 1rem 1.5rem;
+        }
+        .card-body {
+            padding: 2rem;
+        }
+        .form-control {
+            border-radius: 5px;
+            padding: 0.75rem;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            padding: 0.75rem;
+            border-radius: 5px;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+        }
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+            border: 2px dashed #ced4da;
+            border-radius: 5px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .file-upload-wrapper:hover {
+            border-color: #0d6efd;
+        }
+        .file-upload-icon {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        .file-upload-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-upload-text {
+            margin-bottom: 0.5rem;
+        }
+        .file-upload-info {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .file-preview {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .file-preview-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .file-preview-size {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="upload-container">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Upload de Arquivo</h4>
+                    <a href="{{ url_for('files.listar_arquivos') }}" class="btn btn-sm btn-light">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                </div>
+                <div class="card-body">
+                    <!-- Mensagens de alerta -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <!-- Formulário de upload -->
+                    <form method="POST" action="{{ url_for('files.upload_arquivo') }}" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="file-upload-wrapper">
+                            <div class="file-upload-icon">
+                                <i class="bi bi-cloud-arrow-up"></i>
+                            </div>
+                            <h5 class="file-upload-text">Arraste e solte um arquivo ou clique para selecionar</h5>
+                            <p class="file-upload-info">Formatos suportados: PDF, DOC, DOCX, TXT (Máx. 10MB)</p>
+                            {{ form.arquivo(class="file-upload-input", id="arquivo") }}
+                        </div>
+                        
+                        <div class="file-preview" id="filePreview">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-file-earmark me-3" style="font-size: 2rem;"></i>
+                                <div>
+                                    <div class="file-preview-name" id="filePreviewName"></div>
+                                    <div class="file-preview-size" id="filePreviewSize"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="instituicao_id" class="form-label">Instituição</label>
+                            {{ form.instituicao_id(class="form-select") }}
+                            {% if form.instituicao_id.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.instituicao_id.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Selecione a instituição relacionada a este arquivo ou "Nenhuma" se não estiver relacionado a uma instituição específica.</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">Descrição (opcional)</label>
+                            {{ form.descricao(class="form-control", rows="3") }}
+                            {% if form.descricao.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.descricao.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            {{ form.publico(class="form-check-input") }}
+                            <label class="form-check-label" for="publico">
+                                Arquivo público (visível para todos os usuários)
+                            </label>
+                            {% if form.publico.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.publico.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Exibir preview do arquivo selecionado
+        document.getElementById('arquivo').addEventListener('change', function(e) {
+            const filePreview = document.getElementById('filePreview');
+            const filePreviewName = document.getElementById('filePreviewName');
+            const filePreviewSize = document.getElementById('filePreviewSize');
+            
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                
+                // Exibir nome e tamanho do arquivo
+                filePreviewName.textContent = file.name;
+                
+                // Formatar tamanho do arquivo
+                let size = file.size;
+                let sizeStr = '';
+                
+                if (size < 1024) {
+                    sizeStr = size + ' bytes';
+                } else if (size < 1024 * 1024) {
+                    sizeStr = (size / 1024).toFixed(1) + ' KB';
+                } else {
+                    sizeStr = (size / (1024 * 1024)).toFixed(1) + ' MB';
+                }
+                
+                filePreviewSize.textContent = sizeStr;
+                
+                // Exibir preview
+                filePreview.style.display = 'block';
+                
+                // Atualizar ícone com base no tipo de arquivo
+                const fileIcon = filePreview.querySelector('.bi');
+                const fileExt = file.name.split('.').pop().toLowerCase();
+                
+                if (fileExt === 'pdf') {
+                    fileIcon.className = 'bi bi-file-earmark-pdf me-3';
+                    fileIcon.style.color = '#dc3545';
+                } else if (['doc', 'docx'].includes(fileExt)) {
+                    fileIcon.className = 'bi bi-file-earmark-word me-3';
+                    fileIcon.style.color = '#0d6efd';
+                } else if (fileExt === 'txt') {
+                    fileIcon.className = 'bi bi-file-earmark-text me-3';
+                    fileIcon.style.color = '#6c757d';
+                } else {
+                    fileIcon.className = 'bi bi-file-earmark me-3';
+                    fileIcon.style.color = '#6c757d';
+                }
+            } else {
+                filePreview.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

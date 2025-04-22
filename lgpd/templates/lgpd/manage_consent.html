@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Consentimentos - Serra Projetos Educacionais{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">Gerenciar Preferências de Privacidade</h1>
+                </div>
+                <div class="card-body p-4">
+                    <p class="mb-4">De acordo com a Lei Geral de Proteção de Dados (LGPD), você tem o direito de controlar como seus dados pessoais são coletados e utilizados. Por favor, revise e atualize suas preferências abaixo.</p>
+                    
+                    <form method="POST" action="{{ url_for('lgpd.manage_consent') }}">
+                        {{ csrf_token() }}
+                        
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="dados_pessoais" name="dados_pessoais" {% if consentimentos.dados_pessoais %}checked{% endif %}>
+                                <label class="form-check-label" for="dados_pessoais">
+                                    <strong>Processamento de Dados Pessoais</strong>
+                                </label>
+                            </div>
+                            <div class="form-text ms-4">
+                                Autorizo a Serra Projetos Educacionais a coletar e processar meus dados pessoais necessários para fornecer os serviços solicitados, incluindo nome, e-mail, cargo e instituição. Este consentimento é necessário para utilizar a plataforma.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="comunicacoes" name="comunicacoes" {% if consentimentos.comunicacoes %}checked{% endif %}>
+                                <label class="form-check-label" for="comunicacoes">
+                                    <strong>Comunicações e Marketing</strong>
+                                </label>
+                            </div>
+                            <div class="form-text ms-4">
+                                Autorizo a Serra Projetos Educacionais a enviar-me comunicações, incluindo atualizações de serviços, boletins informativos, convites para eventos e ofertas promocionais. Posso cancelar a inscrição a qualquer momento.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="cookies" name="cookies" {% if consentimentos.cookies %}checked{% endif %}>
+                                <label class="form-check-label" for="cookies">
+                                    <strong>Cookies e Tecnologias Similares</strong>
+                                </label>
+                            </div>
+                            <div class="form-text ms-4">
+                                Autorizo a Serra Projetos Educacionais a utilizar cookies e tecnologias similares para melhorar minha experiência, personalizar conteúdo e analisar o uso da plataforma. Cookies essenciais para o funcionamento do site serão utilizados independentemente desta configuração.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-5">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="compartilhamento" name="compartilhamento" {% if consentimentos.compartilhamento %}checked{% endif %}>
+                                <label class="form-check-label" for="compartilhamento">
+                                    <strong>Compartilhamento com Parceiros</strong>
+                                </label>
+                            </div>
+                            <div class="form-text ms-4">
+                                Autorizo a Serra Projetos Educacionais a compartilhar meus dados com parceiros de negócios selecionados que oferecem serviços complementares que podem ser de meu interesse. Meus dados serão compartilhados apenas com parceiros que garantam níveis adequados de proteção.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Salvar Preferências</button>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('lgpd.data_export') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-download me-1"></i> Exportar Meus Dados
+                        </a>
+                        <a href="{{ url_for('lgpd.data_deletion_request') }}" class="btn btn-outline-danger">
+                            <i class="bi bi-trash me-1"></i> Solicitar Exclusão de Dados
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="small text-muted">
+                        <p class="mb-1">Para mais informações sobre como tratamos seus dados pessoais, consulte nossa:</p>
+                        <a href="{{ url_for('lgpd.privacy_policy') }}" class="me-3">Política de Privacidade</a>
+                        <a href="{{ url_for('lgpd.terms') }}">Termos de Uso</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Serra Projetos Educacionais</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .registro-container {
+            max-width: 550px;
+            margin: 50px auto;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+            text-align: center;
+            border-top-left-radius: 10px !important;
+            border-top-right-radius: 10px !important;
+            padding: 1.5rem;
+        }
+        .card-body {
+            padding: 2rem;
+        }
+        .form-control {
+            border-radius: 5px;
+            padding: 0.75rem;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            padding: 0.75rem;
+            border-radius: 5px;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+        }
+        .social-login {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        .social-btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .social-btn i {
+            margin-right: 0.5rem;
+        }
+        .google-btn {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        .apple-btn {
+            background-color: #000;
+            color: #fff;
+        }
+        .microsoft-btn {
+            background-color: #2f2f2f;
+            color: #fff;
+        }
+        .footer-links {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .footer-links a {
+            color: #6c757d;
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+        .footer-links a:hover {
+            color: #0d6efd;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="registro-container">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Serra Projetos Educacionais</h2>
+                    <p class="mb-0">Agente de IA para Consultoria Educacional</p>
+                </div>
+                <div class="card-body">
+                    <h4 class="text-center mb-4">Criar Conta</h4>
+                    
+                    <!-- Mensagens de alerta -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <!-- Formulário de registro -->
+                    <form method="POST" action="{{ url_for('auth.registro') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            <label for="nome_completo" class="form-label">Nome Completo</label>
+                            {{ form.nome_completo(class="form-control", placeholder="Seu nome completo") }}
+                            {% if form.nome_completo.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.nome_completo.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            {{ form.email(class="form-control", placeholder="seu@email.com") }}
+                            {% if form.email.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.email.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nome de Usuário</label>
+                            {{ form.username(class="form-control", placeholder="seu_usuario") }}
+                            {% if form.username.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.username.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="senha" class="form-label">Senha</label>
+                            {{ form.senha(class="form-control", placeholder="Sua senha") }}
+                            {% if form.senha.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.senha.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="confirmar_senha" class="form-label">Confirmar Senha</label>
+                            {{ form.confirmar_senha(class="form-control", placeholder="Confirme sua senha") }}
+                            {% if form.confirmar_senha.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.confirmar_senha.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            {{ form.aceitar_termos(class="form-check-input") }}
+                            <label class="form-check-label" for="aceitar_termos">
+                                Eu li e aceito os <a href="#" target="_blank">Termos de Uso</a> e a <a href="#" target="_blank">Política de Privacidade</a>
+                            </label>
+                            {% if form.aceitar_termos.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.aceitar_termos.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                    
+                    <!-- Login social -->
+                    <div class="social-login">
+                        <p class="text-center text-muted mb-3">Ou registre-se com</p>
+                        
+                        <a href="{{ url_for('auth.auth_google') }}" class="btn social-btn google-btn">
+                            <i class="bi bi-google"></i> Google
+                        </a>
+                        
+                        <a href="{{ url_for('auth.auth_apple') }}" class="btn social-btn apple-btn">
+                            <i class="bi bi-apple"></i> Apple
+                        </a>
+                        
+                        <a href="{{ url_for('auth.auth_microsoft') }}" class="btn social-btn microsoft-btn">
+                            <i class="bi bi-microsoft"></i> Microsoft
+                        </a>
+                    </div>
+                    
+                    <!-- Links de rodapé -->
+                    <div class="footer-links">
+                        <span>Já tem uma conta?</span>
+                        <a href="{{ url_for('auth.login') }}">Faça login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

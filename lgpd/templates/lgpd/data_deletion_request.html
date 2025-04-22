@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Solicitação de Exclusão de Dados - Serra Projetos Educacionais{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h1 class="h4 mb-0">Solicitar Exclusão de Dados</h1>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Atenção:</strong> Esta ação é irreversível. Ao solicitar a exclusão de seus dados, você perderá acesso à sua conta e a todos os dados associados a ela.
+                    </div>
+                    
+                    <p class="mb-4">De acordo com a Lei Geral de Proteção de Dados (LGPD), você tem o direito de solicitar a exclusão de seus dados pessoais. Após a confirmação, iniciaremos o processo de exclusão de seus dados de nossos sistemas.</p>
+                    
+                    <div class="mb-4">
+                        <h5>O que acontece quando você solicita a exclusão de dados:</h5>
+                        <ul>
+                            <li>Sua conta será desativada imediatamente</li>
+                            <li>Seus dados pessoais serão anonimizados ou excluídos de nossos sistemas ativos</li>
+                            <li>Você perderá acesso a todas as tarefas, arquivos e informações associadas à sua conta</li>
+                            <li>Alguns dados podem ser retidos por períodos específicos para cumprir obrigações legais</li>
+                        </ul>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('lgpd.data_deletion_request') }}">
+                        {{ csrf_token() }}
+                        
+                        <div class="mb-3">
+                            <label for="motivo" class="form-label">Motivo da solicitação (opcional)</label>
+                            <select class="form-select" id="motivo" name="motivo">
+                                <option value="">Selecione um motivo (opcional)</option>
+                                <option value="Não uso mais o serviço">Não uso mais o serviço</option>
+                                <option value="Preocupações com privacidade">Preocupações com privacidade</option>
+                                <option value="Insatisfação com o serviço">Insatisfação com o serviço</option>
+                                <option value="Mudança para outro serviço">Mudança para outro serviço</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                            <div class="form-text">Seu feedback nos ajuda a melhorar nossos serviços.</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="senha" class="form-label">Confirme sua senha</label>
+                            <input type="password" class="form-control" id="senha" name="senha" required>
+                            <div class="form-text">Para confirmar sua identidade, por favor digite sua senha atual.</div>
+                        </div>
+                        
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" class="form-check-input" id="confirmacao" required>
+                            <label class="form-check-label" for="confirmacao">
+                                Eu confirmo que desejo excluir minha conta e todos os dados associados a ela. Entendo que esta ação é irreversível.
+                            </label>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('lgpd.manage_consent') }}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-danger">Solicitar Exclusão</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="small text-muted">
+                        <p class="mb-1">Para mais informações sobre como tratamos seus dados pessoais, consulte nossa:</p>
+                        <a href="{{ url_for('lgpd.privacy_policy') }}" class="me-3">Política de Privacidade</a>
+                        <a href="{{ url_for('lgpd.terms') }}">Termos de Uso</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

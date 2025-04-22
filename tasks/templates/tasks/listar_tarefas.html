@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Tarefas - Serra Projetos Educacionais</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .task-board {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+        }
+        .task-column {
+            min-width: 300px;
+            width: 300px;
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        .task-column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid;
+        }
+        .column-importancia .task-column-header {
+            border-color: #0d6efd;
+        }
+        .column-rotina .task-column-header {
+            border-color: #20c997;
+        }
+        .column-urgencia .task-column-header {
+            border-color: #dc3545;
+        }
+        .column-pausa .task-column-header {
+            border-color: #6c757d;
+        }
+        .task-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border-left: 5px solid;
+        }
+        .task-card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .priority-baixa {
+            border-color: #28a745;
+        }
+        .priority-media {
+            border-color: #ffc107;
+        }
+        .priority-alta {
+            border-color: #fd7e14;
+        }
+        .priority-critica {
+            border-color: #dc3545;
+        }
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+        .task-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        .status-pendente {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        .status-em_andamento {
+            background-color: #cfe2ff;
+            color: #0d6efd;
+        }
+        .status-concluida {
+            background-color: #d1e7dd;
+            color: #198754;
+        }
+        .status-cancelada {
+            background-color: #f8d7da;
+            color: #dc3545;
+        }
+        .status-adiada {
+            background-color: #fff3cd;
+            color: #ffc107;
+        }
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .filter-container {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .badge-count {
+            background-color: #0d6efd;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Gerenciamento de Tarefas</h1>
+            <a href="{{ url_for('tasks.nova_tarefa') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-2"></i>Nova Tarefa
+            </a>
+        </div>
+        
+        <!-- Mensagens de alerta -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Formulário de filtro -->
+        <div class="filter-container">
+            <form method="GET" action="{{ url_for('tasks.listar_tarefas') }}" class="row g-3">
+                <div class="col-md-2">
+                    <label for="classificacao" class="form-label">Classificação</label>
+                    <select class="form-select" id="classificacao" name="classificacao">
+                        <option value="" {% if not classificacao %}selected{% endif %}>Todas</option>
+                        <option value="importancia" {% if classificacao == 'importancia' %}selected{% endif %}>Importância</option>
+                        <option value="rotina" {% if classificacao == 'rotina' %}selected{% endif %}>Rotina</option>
+                        <option value="urgencia" {% if classificacao == 'urgencia' %}selected{% endif %}>Urgência</option>
+                        <option value="pausa" {% if classificacao == 'pausa' %}selected{% endif %}>Pausa</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="" {% if not status %}selected{% endif %}>Todos</option>
+                        <option value="pendente" {% if status == 'pendente' %}selected{% endif %}>Pendente</option>
+                        <option value="em_andamento" {% if status == 'em_andamento' %}selected{% endif %}>Em Andamento</option>
+                        <option value="concluida" {% if status == 'concluida' %}selected{% endif %}>Concluída</option>
+                        <option value="cancelada" {% if status == 'cancelada' %}selected{% endif %}>Cancelada</option>
+                        <option value="adiada" {% if status == 'adiada' %}selected{% endif %}>Adiada</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="prioridade" class="form-label">Prioridade</label>
+                    <select class="form-select" id="prioridade" name="prioridade">
+                        <option value="" {% if not prioridade %}selected{% endif %}>Todas</option>
+                        <option value="baixa" {% if prioridade == 'baixa' %}selected{% endif %}>Baixa</option>
+                        <option value="media" {% if prioridade == 'media' %}selected{% endif %}>Média</option>
+                        <option value="alta" {% if prioridade == 'alta' %}selected{% endif %}>Alta</option>
+                        <option value="critica" {% if prioridade == 'critica' %}selected{% endif %}>Crítica</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="responsavel_id" class="form-label">Responsável</label>
+                    <select class="form-select" id="responsavel_id" name="responsavel_id">
+                        <option value="0" {% if responsavel_id == '0' %}selected{% endif %}>Todos</option>
+                        {% for id, nome in form.responsavel_id.choices %}
+                            {% if id != 0 %}
+                                <option value="{{ id }}" {% if responsavel_id|int == id %}selected{% endif %}>{{ nome }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="termo" class="form-label">Termo</label>
+                    <input type="text" class="form-control" id="termo" name="termo" value="{{ termo }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-filter me-2"></i>Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Quadro de tarefas -->
+        <div class="task-board">
+            <!-- Coluna de Importância -->
+            <div class="task-column column-importancia">
+                <div class="task-column-header">
+                    <h5 class="mb-0">Importância</h5>
+                    <span class="badge-count">{{ tarefas_por_classificacao['importancia']|length }}</span>
+                </div>
+                {% if tarefas_por_classificacao['importancia'] %}
+                    {% for tarefa in tarefas_por_classificacao['importancia'] %}
+                        <div class="task-card priority-{{ tarefa.prioridade.value }}">
+                            <span class="task-status status-{{ tarefa.status.value }}">
+                                {{ tarefa.status.value|replace('_', ' ')|capitalize }}
+                            </span>
+                            <h6 class="task-title">{{ tarefa.titulo }}</h6>
+                            {% if tarefa.descricao %}
+                                <p class="task-description small text-truncate">{{ tarefa.descricao }}</p>
+                            {% endif %}
+                            <div class="task-meta">
+                                <span>
+                                    <i class="bi bi-person"></i>
+                                    {% if tarefa.responsavel %}
+                                        {{ tarefa.responsavel.nome_completo }}
+                                    {% else %}
+                                        Não atribuído
+                                    {% endif %}
+                                </span>
+                                {% if tarefa.data_prazo %}
+                                    <span>
+                                        <i class="bi bi-calendar"></i>
+                                        {{ tarefa.data_prazo.strftime('%d/%m/%Y') }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="task-actions">
+                                <a href="{{ url_for('tasks.visualizar_tarefa', tarefa_id=tarefa.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ url_for('tasks.editar_tarefa', tarefa_id=tarefa.id) }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                {% if not tarefa.concluida %}
+                                    <form action="{{ url_for('tasks.concluir_tarefa', tarefa_id=tarefa.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                        Nenhuma tarefa
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Coluna de Rotina -->
+            <div class="task-column column-rotina">
+                <div class="task-column-header">
+                    <h5 class="mb-0">Rotina</h5>
+                    <span class="badge-count">{{ tarefas_por_classificacao['rotina']|length }}</span>
+                </div>
+                {% if tarefas_por_classificacao['rotina'] %}
+                    {% for tarefa in tarefas_por_classificacao['rotina'] %}
+                        <div class="task-card priority-{{ tarefa.prioridade.value }}">
+                            <span class="task-status status-{{ tarefa.status.value }}">
+                                {{ tarefa.status.value|replace('_', ' ')|capitalize }}
+                            </span>
+                            <h6 class="task-title">{{ tarefa.titulo }}</h6>
+                            {% if tarefa.descricao %}
+                                <p class="task-description small text-truncate">{{ tarefa.descricao }}</p>
+                            {% endif %}
+                            <div class="task-meta">
+                                <span>
+                                    <i class="bi bi-person"></i>
+                                    {% if tarefa.responsavel %}
+                                        {{ tarefa.responsavel.nome_completo }}
+                                    {% else %}
+                                        Não atribuído
+                                    {% endif %}
+                                </span>
+                                {% if tarefa.data_prazo %}
+                                    <span>
+                                        <i class="bi bi-calendar"></i>
+                                        {{ tarefa.data_prazo.strftime('%d/%m/%Y') }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="task-actions">
+                                <a href="{{ url_for('tasks.visualizar_tarefa', tarefa_id=tarefa.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ url_for('tasks.editar_tarefa', tarefa_id=tarefa.id) }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                {% if not tarefa.concluida %}
+                                    <form action="{{ url_for('tasks.concluir_tarefa', tarefa_id=tarefa.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                        Nenhuma tarefa
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Coluna de Urgência -->
+            <div class="task-column column-urgencia">
+                <div class="task-column-header">
+                    <h5 class="mb-0">Urgência</h5>
+                    <span class="badge-count">{{ tarefas_por_classificacao['urgencia']|length }}</span>
+                </div>
+                {% if tarefas_por_classificacao['urgencia'] %}
+                    {% for tarefa in tarefas_por_classificacao['urgencia'] %}
+                        <div class="task-card priority-{{ tarefa.prioridade.value }}">
+                            <span class="task-status status-{{ tarefa.status.value }}">
+                                {{ tarefa.status.value|replace('_', ' ')|capitalize }}
+                            </span>
+                            <h6 class="task-title">{{ tarefa.titulo }}</h6>
+                            {% if tarefa.descricao %}
+                                <p class="task-description small text-truncate">{{ tarefa.descricao }}</p>
+                            {% endif %}
+                            <div class="task-meta">
+                                <span>
+                                    <i class="bi bi-person"></i>
+                                    {% if tarefa.responsavel %}
+                                        {{ tarefa.responsavel.nome_completo }}
+                                    {% else %}
+                                        Não atribuído
+                                    {% endif %}
+                                </span>
+                                {% if tarefa.data_prazo %}
+                                    <span>
+                                        <i class="bi bi-calendar"></i>
+                                        {{ tarefa.data_prazo.strftime('%d/%m/%Y') }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="task-actions">
+                                <a href="{{ url_for('tasks.visualizar_tarefa', tarefa_id=tarefa.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ url_for('tasks.editar_tarefa', tarefa_id=tarefa.id) }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                {% if not tarefa.concluida %}
+                                    <form action="{{ url_for('tasks.concluir_tarefa', tarefa_id=tarefa.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                        Nenhuma tarefa
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Coluna de Pausa -->
+            <div class="task-column column-pausa">
+                <div class="task-column-header">
+                    <h5 class="mb-0">Pausa</h5>
+                    <span class="badge-count">{{ tarefas_por_classificacao['pausa']|length }}</span>
+                </div>
+                {% if tarefas_por_classificacao['pausa'] %}
+                    {% for tarefa in tarefas_por_classificacao['pausa'] %}
+                        <div class="task-card priority-{{ tarefa.prioridade.value }}">
+                            <span class="task-status status-{{ tarefa.status.value }}">
+                                {{ tarefa.status.value|replace('_', ' ')|capitalize }}
+                            </span>
+                            <h6 class="task-title">{{ tarefa.titulo }}</h6>
+                            {% if tarefa.descricao %}
+                                <p class="task-description small text-truncate">{{ tarefa.descricao }}</p>
+                            {% endif %}
+                            <div class="task-meta">
+                                <span>
+                                    <i class="bi bi-person"></i>
+                                    {% if tarefa.responsavel %}
+                                        {{ tarefa.responsavel.nome_completo }}
+                                    {% else %}
+                                        Não atribuído
+                                    {% endif %}
+                                </span>
+                                {% if tarefa.data_prazo %}
+                                    <span>
+                                        <i class="bi bi-calendar"></i>
+                                        {{ tarefa.data_prazo.strftime('%d/%m/%Y') }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="task-actions">
+                                <a href="{{ url_for('tasks.visualizar_tarefa', tarefa_id=tarefa.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ url_for('tasks.editar_tarefa', tarefa_id=tarefa.id) }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                {% if not tarefa.concluida %}
+                                    <form action="{{ url_for('tasks.concluir_tarefa', tarefa_id=tarefa.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                        Nenhuma tarefa
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
